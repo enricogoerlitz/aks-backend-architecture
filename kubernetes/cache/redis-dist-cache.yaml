@@ -1,0 +1,170 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-cluster-config
+data:
+  redis.conf: |
+    bind 0.0.0.0
+    port 6379
+    cluster-enabled yes
+    cluster-config-file /data/nodes.conf
+    cluster-node-timeout 5000
+    appendonly yes
+    protected-mode no
+    masterauth my-password
+    user default on +@all ~* >my-password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-cluster-headless
+  labels:
+    app: redis-cluster
+spec:
+  ports:
+  - port: 6379
+    targetPort: 6379
+    name: client
+  - port: 16379
+    targetPort: 16379
+    name: gossip
+  clusterIP: None
+  selector:
+    app: redis-cluster
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-cluster
+  labels:
+    app: redis-cluster
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 6379
+    targetPort: 6379
+    name: client
+  selector:
+    app: redis-cluster
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis-cluster
+spec:
+  serviceName: redis-cluster-headless
+  replicas: 3
+  selector:
+    matchLabels:
+      app: redis-cluster
+  template:
+    metadata:
+      labels:
+        app: redis-cluster
+    spec:
+      containers:
+      - name: redis
+        image: redis:7.4.2-alpine
+        command: ["redis-server", "/conf/redis.conf"]
+        ports:
+        - containerPort: 6379
+          name: client
+        - containerPort: 16379
+          name: gossip
+        readinessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - redis-cli -a "my-password" ping
+          initialDelaySeconds: 15
+          timeoutSeconds: 5
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        volumeMounts:
+        - name: conf
+          mountPath: /conf
+        - name: data
+          mountPath: /data
+      volumes:
+      - name: conf
+        configMap:
+          name: redis-cluster-config
+          defaultMode: 0644
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+---
+# A manual job to create the cluster when all pods are ready
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: redis-cluster-init
+spec:
+  ttlSecondsAfterFinished: 100
+  backoffLimit: 0
+  template:
+    spec:
+      containers:
+      - name: redis-cluster-init
+        image: redis:7.4.2-alpine
+        command:
+        - sh
+        - -c
+        - |
+          REDIS_PORT=6379
+          TIMEOUT=240
+          echo "Waiting for Redis pods to be ready..."
+
+          start_time=$(date +%s)
+
+          while true; do
+            all_ready=true
+
+            for i in 0 1 2; do
+              host="redis-cluster-$i.redis-cluster-headless.default.svc.cluster.local"
+              if ! nc -z "$host" "$REDIS_PORT"; then
+                all_ready=false
+                break
+              fi
+            done
+
+            if [ "$all_ready" = true ]; then
+              echo "All Redis pods are ready."
+              break
+            fi
+
+            current_time=$(date +%s)
+            elapsed=$((current_time - start_time))
+
+            if [ "$elapsed" -ge "$TIMEOUT" ]; then
+              echo "Timeout: Not all Redis pods became ready in $TIMEOUT seconds."
+              exit 1
+            fi
+
+            sleep 1
+          done
+
+          sleep 5
+          echo "Creating Redis cluster..."
+          redis-cli --cluster create \
+            redis-cluster-0.redis-cluster-headless.default.svc.cluster.local:6379 \
+            redis-cluster-1.redis-cluster-headless.default.svc.cluster.local:6379 \
+            redis-cluster-2.redis-cluster-headless.default.svc.cluster.local:6379 \
+            -a "my-password" \
+            --cluster-replicas 0 --cluster-yes
+
+          sleep 5
+          echo "Checking cluster status..."
+          redis-cli -h redis-cluster-0.redis-cluster-headless.default.svc.cluster.local -a "my-password" cluster info
+      restartPolicy: Never

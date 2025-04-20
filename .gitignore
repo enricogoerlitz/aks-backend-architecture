@@ -1,0 +1,100 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+*.tfvars
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraform.lock.hcl
+terraform.tfstate.backup
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+*.log
+.env
+.venv/
+env/
+venv/
+pip-wheel-metadata/
+.mypy_cache/
+.pytest_cache/
+.tox/
+.coverage
+htmlcov/
+.cache/
+.pyre/
+.pytype/
+.ipynb_checkpoints/
+*.sqlite3
+
+# Go
+/bin/
+/pkg/
+/*.exe
+/*.test
+*.out
+*.mod
+*.sum
+*.coverprofile
+*.log
+
+# Kubernetes
+*.yaml~
+*.yml~
+.kube/
+kustomization.build.yaml
+*.bak
+
+# IDEs and OS
+.vscode/
+.idea/
+*.swp
+*.swo
+*.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+*.tmp
+*.temp
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Icon? (resource fork)
+Icon?
+
+# macOS Finder metadata
+._*
+
+# Spotlight search indexing files
+.Spotlight-V100
+
+# macOS Trash
+.Trashes
+
+# macOS sleep image
+.sleepimage
+
+# macOS swap files
+.swapfile
+
+# macOS volume info
+.VolumeIcon.icns
+
+# macOS mount info
+.metadata_never_index
+.fseventsd
