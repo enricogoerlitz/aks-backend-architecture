@@ -3,8 +3,9 @@ resource "azurerm_kubernetes_cluster" "main" {
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
   dns_prefix          = "eaksdevops${terraform.workspace}weuaks"
-  sku_tier          = var.aks_pricing_tier
+  sku_tier            = var.aks_pricing_tier
   node_resource_group = "explore-aks-devops-aks-management-${terraform.workspace}-weu-rg"
+  kubernetes_version  = "1.31.7"
 
   default_node_pool {
     name       = "default"
@@ -21,27 +22,30 @@ resource "azurerm_kubernetes_cluster" "main" {
   })
 }
 
-resource "azurerm_kubernetes_cluster_node_pool" "application" {
-  name                  = "application"
-  kubernetes_cluster_id = azurerm_kubernetes_cluster.main.id
-  vm_size               = "Standard_D2ps_v6"
+# resource "azurerm_kubernetes_cluster_node_pool" "application" {
+#   name                  = "apppool"
+#   kubernetes_cluster_id = azurerm_kubernetes_cluster.main.id
+#   vm_size               = "Standard_D2ps_v6"
 
-  auto_scaling_enabled = true
-  min_count           = 1
-  max_count           = 3
+#   auto_scaling_enabled = true
+#   min_count            = 1
+#   max_count            = 3
 
-  tags = merge(var.default_tags, {
-    "env" = terraform.workspace
-  })
-}
+#   tags = merge(var.default_tags, {
+#     "env" = terraform.workspace
+#   })
+# }
 
-output "client_certificate" {
-  value     = azurerm_kubernetes_cluster.main.kube_config[0].client_certificate
-  sensitive = true
-}
+# resource "azurerm_kubernetes_cluster_node_pool" "database" {
+#   name                  = "dbpool"
+#   kubernetes_cluster_id = azurerm_kubernetes_cluster.main.id
+#   vm_size               = "Standard_D2ps_v6"
 
-output "kube_config" {
-  value = azurerm_kubernetes_cluster.main.kube_config_raw
+#   auto_scaling_enabled = true
+#   min_count            = 1
+#   max_count            = 3
 
-  sensitive = true
-}
+#   tags = merge(var.default_tags, {
+#     "env" = terraform.workspace
+#   })
+# }

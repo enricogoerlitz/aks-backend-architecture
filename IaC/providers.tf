@@ -10,12 +10,12 @@ terraform {
     }
   }
 
-#   backend "azurerm" {
-#     resource_group_name  = "explore-aks-devops-project-euwest-rg"
-#     storage_account_name = "exploreadbeuwestsa"
-#     container_name       = "exploreadb-terraform-backend"
-#     key                  = "terraform.tfstate"
-#   }
+  #   backend "azurerm" {
+  #     resource_group_name  = "explore-aks-devops-project-euwest-rg"
+  #     storage_account_name = "exploreadbeuwestsa"
+  #     container_name       = "exploreadb-terraform-backend"
+  #     key                  = "terraform.tfstate"
+  #   }
 }
 
 provider "azurerm" {
