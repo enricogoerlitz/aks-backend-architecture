@@ -43,10 +43,10 @@ htmlcov/
 /*.exe
 /*.test
 *.out
-*.mod
 *.sum
 *.coverprofile
 *.log
+tmp
 
 # Kubernetes
 *.yaml~

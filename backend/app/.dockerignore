@@ -1,0 +1,5 @@
+go.sum
+air.*
+tmp
+*.md
+*.docker*
