@@ -43,7 +43,6 @@ htmlcov/
 /*.exe
 /*.test
 *.out
-*.sum
 *.coverprofile
 *.log
 tmp

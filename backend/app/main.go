@@ -1,11 +1,11 @@
 package main
 
 import (
-	"explore-aks-backend-app-air/cache"
-	"explore-aks-backend-app-air/constants"
-	"explore-aks-backend-app-air/database"
-	"explore-aks-backend-app-air/routes"
-	"explore-aks-backend-app-air/utils"
+	"explore-aks-backend-app-air/src/cache"
+	"explore-aks-backend-app-air/src/constants"
+	"explore-aks-backend-app-air/src/database"
+	"explore-aks-backend-app-air/src/routes"
+	"explore-aks-backend-app-air/src/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"

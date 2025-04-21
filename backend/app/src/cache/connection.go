@@ -1,7 +1,7 @@
 package cache
 
 import (
-	"explore-aks-backend-app-air/constants"
+	"explore-aks-backend-app-air/src/constants"
 	"strings"
 )
 

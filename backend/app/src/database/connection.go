@@ -1,7 +1,7 @@
 package database
 
 import (
-	"explore-aks-backend-app-air/constants"
+	"explore-aks-backend-app-air/src/constants"
 
 	"gorm.io/gorm"
 )

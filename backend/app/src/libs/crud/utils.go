@@ -1,7 +1,7 @@
 package crud
 
 import (
-	"explore-aks-backend-app-air/database"
+	"explore-aks-backend-app-air/src/database"
 	"fmt"
 	"reflect"
 	"strconv"
