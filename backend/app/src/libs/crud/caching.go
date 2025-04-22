@@ -1,15 +1,19 @@
 package crud
 
 import (
-	"explore-aks-backend-app-air/src/cache"
 	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
+type IApplicationCache interface {
+	Get(ctx *gin.Context, key string) (string, error)
+	Set(ctx *gin.Context, key string, value string, expiration time.Duration) error
+}
+
 type CachingConfig struct {
-	CacheDB    cache.IApplicationCache
+	CacheDB    IApplicationCache
 	Key        string
 	Expiration time.Duration
 	UseCache   bool

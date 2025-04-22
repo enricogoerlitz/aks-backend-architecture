@@ -58,18 +58,16 @@ func HandleGet[ResponsePayload any](c *gin.Context, id interface{}, dbQuery *gor
 }
 
 func HandleGetCached[ResponsePayload any](c *gin.Context, id interface{}, dbQuery *gorm.DB, cacheCfg CachingConfig) error {
-	if !cacheCfg.UseCache {
-		return HandleGet[ResponsePayload](c, id, dbQuery)
-	}
-
-	cachedData, err := cacheCfg.CacheDB.Get(c, cacheCfg.Key)
-	if err == nil && cachedData != "" {
-		var cachedObj ResponsePayload
-		if err := json.Unmarshal([]byte(cachedData), &cachedObj); err != nil {
-			return HandleInternalServerError(c, err)
+	if cacheCfg.UseCache {
+		cachedData, err := cacheCfg.CacheDB.Get(c, cacheCfg.Key)
+		if err == nil && cachedData != "" {
+			var cachedObj ResponsePayload
+			if err := json.Unmarshal([]byte(cachedData), &cachedObj); err != nil {
+				return HandleInternalServerError(c, err)
+			}
+			c.JSON(http.StatusOK, cachedObj)
+			return nil
 		}
-		c.JSON(http.StatusOK, cachedObj)
-		return nil
 	}
 
 	var obj ResponsePayload
@@ -102,18 +100,16 @@ func HandleGetList[ResponsePayload any](c *gin.Context, sc *CRUDServiceConfig, d
 }
 
 func HandleGetListCached[ResponsePayload any](c *gin.Context, sc *CRUDServiceConfig, dbQuery *gorm.DB, cacheCfg CachingConfig) error {
-	if !cacheCfg.UseCache {
-		return HandleGetList[ResponsePayload](c, sc, dbQuery)
-	}
-
-	cachedData, err := cacheCfg.CacheDB.Get(c, cacheCfg.Key)
-	if err == nil && cachedData != "" {
-		var cachedList []ResponsePayload
-		if err := json.Unmarshal([]byte(cachedData), &cachedList); err != nil {
-			return HandleInternalServerError(c, err)
+	if cacheCfg.UseCache {
+		cachedData, err := cacheCfg.CacheDB.Get(c, cacheCfg.Key)
+		if err == nil && cachedData != "" {
+			var cachedList []ResponsePayload
+			if err := json.Unmarshal([]byte(cachedData), &cachedList); err != nil {
+				return HandleInternalServerError(c, err)
+			}
+			c.JSON(http.StatusOK, cachedList)
+			return nil
 		}
-		c.JSON(http.StatusOK, cachedList)
-		return nil
 	}
 
 	var objList []ResponsePayload
