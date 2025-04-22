@@ -9,10 +9,10 @@ RUN apt-get update && \
 
 # Flyway installieren
 ENV FLYWAY_VERSION=10.18.0
-RUN curl -L "https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/${FLYWAY_VERSION}/flyway-commandline-${FLYWAY_VERSION}-linux-x64.tar.gz" \
+RUN curl -L "https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/10.18.0/flyway-commandline-10.18.0-linux-x64.tar.gz" \
     -o flyway.tar.gz && \
     tar -xzf flyway.tar.gz && \
-    mv flyway-${FLYWAY_VERSION} /opt/flyway && \
+    mv flyway-10.18.0 /opt/flyway && \
     ln -s /opt/flyway/flyway /usr/local/bin/flyway && \
     rm flyway.tar.gz
 
