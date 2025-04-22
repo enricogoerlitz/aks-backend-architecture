@@ -13,5 +13,8 @@ func SetupRoutes(router *gin.Engine) {
 	apiV1 := router.Group(API_PREFIX + "/v1")
 	{
 		setupUserRoutes(apiV1)
+		setupCustomerRoutes(apiV1)
+		setupProjectRoutes(apiV1)
+		setupProjecttimeRoutes(apiV1)
 	}
 }

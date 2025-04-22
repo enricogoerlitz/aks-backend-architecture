@@ -8,7 +8,7 @@ import (
 )
 
 type UserController struct {
-	ServiceCfg crud.CRUDServiceConfig
+	ServiceCfg *crud.CRUDServiceConfig
 }
 
 func (uc *UserController) GetUser(c *gin.Context) {

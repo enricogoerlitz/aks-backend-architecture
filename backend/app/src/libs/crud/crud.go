@@ -68,6 +68,15 @@ func HandleGetList[ResponsePayload any](c *gin.Context, sc *CRUDServiceConfig, d
 	return nil
 }
 
+func HandlePost[RequestPayload any, ResponsePayload any](c *gin.Context, sc *CRUDServiceConfig) error {
+	var payload RequestPayload
+	if err := c.ShouldBindJSON(&payload); err != nil {
+		return HandlePayloadError(c, err)
+	}
+
+	return HandlePostCustomPayload[RequestPayload, ResponsePayload](c, sc, payload)
+}
+
 func HandlePostCustomPayload[RequestPayload any, ResponsePayload any](c *gin.Context, sc *CRUDServiceConfig, payload RequestPayload) error {
 	payloadValue := ReflectParser.GetReflectValueObject(payload)
 
@@ -83,7 +92,7 @@ func HandlePostCustomPayload[RequestPayload any, ResponsePayload any](c *gin.Con
 
 	var obj ResponsePayload
 
-	MapStruct(&payload, &obj)
+	MapStruct(&obj, &payload)
 	if err := database.DBWrite.Create(&obj).Error; err != nil {
 		return HandleInternalServerError(c, err)
 	}
@@ -92,13 +101,13 @@ func HandlePostCustomPayload[RequestPayload any, ResponsePayload any](c *gin.Con
 	return nil
 }
 
-func HandlePost[RequestPayload any, ResponsePayload any](c *gin.Context, sc *CRUDServiceConfig) error {
+func HandlePatch[BaseModel any, RequestPayload any](c *gin.Context, sc *CRUDServiceConfig, id interface{}) error {
 	var payload RequestPayload
 	if err := c.ShouldBindJSON(&payload); err != nil {
 		return HandlePayloadError(c, err)
 	}
 
-	return HandlePostCustomPayload[RequestPayload, ResponsePayload](c, sc, payload)
+	return HandlePatchCustomPayload[BaseModel, RequestPayload](c, sc, id, payload)
 }
 
 func HandlePatchCustomPayload[BaseModel any, RequestPayload any](c *gin.Context, sc *CRUDServiceConfig, id interface{}, payload RequestPayload) error {
@@ -108,7 +117,6 @@ func HandlePatchCustomPayload[BaseModel any, RequestPayload any](c *gin.Context,
 	}
 
 	payloadValue := ReflectParser.GetReflectValueObject(payload)
-
 	if err := CheckForeignKeysExisting(payloadValue, sc.ForeignKeyColumns, false); err != nil {
 		return HandleBadRequest(c, err)
 	} else if err := CheckUniqueColumns[RequestPayload](payloadValue, sc.UniqueColumns); err != nil {
@@ -121,17 +129,11 @@ func HandlePatchCustomPayload[BaseModel any, RequestPayload any](c *gin.Context,
 		return HandleInternalServerError(c, err)
 	}
 
-	c.JSON(http.StatusOK, obj)
+	var responseObj RequestPayload
+	MapStruct(&responseObj, &obj)
+
+	c.JSON(http.StatusOK, responseObj)
 	return nil
-}
-
-func HandlePatch[BaseModel any, RequestPayload any](c *gin.Context, sc *CRUDServiceConfig, id interface{}) error {
-	var payload RequestPayload
-	if err := c.ShouldBindJSON(&payload); err != nil {
-		return HandlePayloadError(c, err)
-	}
-
-	return HandlePatchCustomPayload[BaseModel, RequestPayload](c, sc, id, payload)
 }
 
 func HandleDelete[BaseModel any](c *gin.Context, id ...interface{}) error {

@@ -69,7 +69,7 @@ func (p *ReflectParserUtils) GetObjectFieldNames(obj interface{}) ([]string, err
 
 var ReflectParser = ReflectParserUtils{}
 
-func MapStruct(src interface{}, dest interface{}) error {
+func MapStruct(dest interface{}, src interface{}) error {
 	srcValue := reflect.ValueOf(src)
 	destValue := reflect.ValueOf(dest)
 

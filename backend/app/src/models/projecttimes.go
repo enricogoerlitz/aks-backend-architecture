@@ -21,6 +21,20 @@ func (ProjecttimeModel) TableName() string {
 }
 
 type ProjecttimeResponse struct {
+	ID            int     `gorm:"primaryKey"`
+	UserID        int     `gorm:"not null"`
+	ProjectID     int     `gorm:"not null"`
+	Hours         float64 `gorm:"not null"`
+	BillableHours float64 `gorm:"not null"`
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
+}
+
+func (ProjecttimeResponse) TableName() string {
+	return PROJECTTIMES_MODEL_NAME
+}
+
+type ProjecttimeResponseDetail struct {
 	ID            int          `gorm:"primaryKey"`
 	UserID        int          `gorm:"not null"`
 	User          UserModel    `gorm:"foreignKey:ProjectID"`
@@ -32,7 +46,7 @@ type ProjecttimeResponse struct {
 	UpdatedAt     time.Time
 }
 
-func (ProjecttimeResponse) TableName() string {
+func (ProjecttimeResponseDetail) TableName() string {
 	return PROJECTTIMES_MODEL_NAME
 }
 
