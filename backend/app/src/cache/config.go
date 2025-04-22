@@ -1,7 +1,7 @@
 package cache
 
 import (
-	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,7 +23,7 @@ func (c *ApplicationCacheFactory) Create(cacheType string, config CacheConfig) I
 
 type IApplicationCache interface {
 	Get(ctx *gin.Context, key string) (string, error)
-	Set(ctx *gin.Context, key string, value string) error
+	Set(ctx *gin.Context, key string, value string, expiration time.Duration) error
 }
 
 type CacheConfig struct {
@@ -31,13 +31,4 @@ type CacheConfig struct {
 	Port     string
 	Username string
 	Password string
-}
-
-func NewCacheConfig(hosts string, port string, username string, password string) *CacheConfig {
-	return &CacheConfig{
-		Hosts:    strings.Split(hosts, ","),
-		Port:     port,
-		Username: username,
-		Password: password,
-	}
 }

@@ -3,6 +3,23 @@ name: explore-aks-backend-app-air
 # RUN: docker compose -f air.docker-compose.yml up --build
 
 services:
+  flyway-db-migration-job:
+    platform: linux/amd64
+    container_name: backend-app-flyway-db-migration-job
+    build:
+      context: ../database/migration-service
+      dockerfile: flyway-migration-service.Dockerfile
+    environment:
+      FLYWAY_URL: jdbc:postgresql://database-service:5432/database
+      FLYWAY_USER: postgres
+      FLYWAY_PASSWORD: password
+      FLYWAY_SCHEMAS: public
+    command: ["python", "scripts/flyway.py", "migrate"]
+    volumes:
+      - ../database/migration-service:/app
+    networks:
+      - app_network
+
   app:
     container_name: backend-app-air
     build:

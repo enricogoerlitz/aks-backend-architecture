@@ -1,0 +1,4 @@
+psycopg2-binary==2.9.10
+pyodbc==5.2.0
+dotenv==0.9.9
+azure-storage-blob==12.25.1
