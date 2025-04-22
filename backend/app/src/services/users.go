@@ -3,11 +3,11 @@ package services
 import "explore-aks-backend-app-air/src/libs/crud"
 
 type UserCRUDService struct {
-	*crud.CRUDServiceConfig
+	Config *crud.CRUDServiceConfig
 }
 
 var UserService = UserCRUDService{
-	CRUDServiceConfig: &crud.CRUDServiceConfig{
+	Config: &crud.CRUDServiceConfig{
 		UniqueColumns: []string{},
 		UniqueColumnsTogether: [][]string{
 			{"Firstname", "Lastname"},

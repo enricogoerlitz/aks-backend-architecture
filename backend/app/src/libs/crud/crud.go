@@ -1,6 +1,7 @@
 package crud
 
 import (
+	"encoding/json"
 	"explore-aks-backend-app-air/src/database"
 	"net/http"
 
@@ -56,6 +57,38 @@ func HandleGet[ResponsePayload any](c *gin.Context, id interface{}, dbQuery *gor
 	return nil
 }
 
+func HandleGetCached[ResponsePayload any](c *gin.Context, id interface{}, dbQuery *gorm.DB, cacheCfg CachingConfig) error {
+	if !cacheCfg.UseCache {
+		return HandleGet[ResponsePayload](c, id, dbQuery)
+	}
+
+	cachedData, err := cacheCfg.CacheDB.Get(c, cacheCfg.Key)
+	if err == nil && cachedData != "" {
+		var cachedObj ResponsePayload
+		if err := json.Unmarshal([]byte(cachedData), &cachedObj); err != nil {
+			return HandleInternalServerError(c, err)
+		}
+		c.JSON(http.StatusOK, cachedObj)
+		return nil
+	}
+
+	var obj ResponsePayload
+	dbQuery = GetDBQuery(dbQuery)
+
+	if err := dbQuery.First(&obj, id).Error; err != nil {
+		return HandleDatabaseNotFound(c, err)
+	}
+
+	cachedObj, err := json.Marshal(obj)
+	if err != nil {
+		return HandleInternalServerError(c, err)
+	}
+	cacheCfg.CacheDB.Set(c, cacheCfg.Key, string(cachedObj), cacheCfg.Expiration)
+
+	c.JSON(http.StatusOK, obj)
+	return nil
+}
+
 func HandleGetList[ResponsePayload any](c *gin.Context, sc *CRUDServiceConfig, dbQuery *gorm.DB) error {
 	var obj []ResponsePayload
 	dbQuery = PaginateDBQuery(c, GetDBQuery(dbQuery), sc.PaginationMaxPageSize)
@@ -65,6 +98,38 @@ func HandleGetList[ResponsePayload any](c *gin.Context, sc *CRUDServiceConfig, d
 	}
 
 	c.JSON(http.StatusOK, obj)
+	return nil
+}
+
+func HandleGetListCached[ResponsePayload any](c *gin.Context, sc *CRUDServiceConfig, dbQuery *gorm.DB, cacheCfg CachingConfig) error {
+	if !cacheCfg.UseCache {
+		return HandleGetList[ResponsePayload](c, sc, dbQuery)
+	}
+
+	cachedData, err := cacheCfg.CacheDB.Get(c, cacheCfg.Key)
+	if err == nil && cachedData != "" {
+		var cachedList []ResponsePayload
+		if err := json.Unmarshal([]byte(cachedData), &cachedList); err != nil {
+			return HandleInternalServerError(c, err)
+		}
+		c.JSON(http.StatusOK, cachedList)
+		return nil
+	}
+
+	var objList []ResponsePayload
+	dbQuery = PaginateDBQuery(c, GetDBQuery(dbQuery), sc.PaginationMaxPageSize)
+
+	if err := dbQuery.Find(&objList).Error; err != nil {
+		return HandleDatabaseNotFound(c, err)
+	}
+
+	cachedObj, err := json.Marshal(objList)
+	if err != nil {
+		return HandleInternalServerError(c, err)
+	}
+	cacheCfg.CacheDB.Set(c, cacheCfg.Key, string(cachedObj), cacheCfg.Expiration)
+
+	c.JSON(http.StatusOK, objList)
 	return nil
 }
 
@@ -91,7 +156,6 @@ func HandlePostCustomPayload[RequestPayload any, ResponsePayload any](c *gin.Con
 	}
 
 	var obj ResponsePayload
-
 	MapStruct(&obj, &payload)
 	if err := database.DBWrite.Create(&obj).Error; err != nil {
 		return HandleInternalServerError(c, err)

@@ -6,7 +6,7 @@ import (
 )
 
 type ProjectCRUDService struct {
-	*crud.CRUDServiceConfig
+	Config *crud.CRUDServiceConfig
 }
 
 var customerForeignKeyColumn = crud.ForeignKeyColumn{
@@ -15,7 +15,7 @@ var customerForeignKeyColumn = crud.ForeignKeyColumn{
 }
 
 var ProjectService = ProjectCRUDService{
-	CRUDServiceConfig: &crud.CRUDServiceConfig{
+	Config: &crud.CRUDServiceConfig{
 		UniqueColumns:         []string{"Name"},
 		UniqueColumnsTogether: [][]string{},
 		ForeignKeyColumns: []crud.ForeignKeyColumn{

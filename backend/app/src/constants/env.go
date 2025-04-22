@@ -1,6 +1,9 @@
 package constants
 
-import "os"
+import (
+	"explore-aks-backend-app-air/src/utils"
+	"os"
+)
 
 var ENV_MODE = os.Getenv("MODE")
 var ENV_DB_TYPE = os.Getenv("DB_TYPE")
@@ -18,3 +21,4 @@ var ENV_CACHE_HOSTS = os.Getenv("CACHE_HOSTS")
 var ENV_CACHE_PORT = os.Getenv("CACHE_PORT")
 var ENV_CACHE_USER = os.Getenv("CACHE_USER")
 var ENV_CACHE_PASSWORD = os.Getenv("CACHE_PASSWORD")
+var ENV_CACHE_TTL_IN_SECONDS = utils.ParseStringToInt(os.Getenv("CACHE_TTL"), 60)

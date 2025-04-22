@@ -37,7 +37,7 @@ func (ProjecttimeResponse) TableName() string {
 type ProjecttimeResponseDetail struct {
 	ID            int          `gorm:"primaryKey"`
 	UserID        int          `gorm:"not null"`
-	User          UserModel    `gorm:"foreignKey:ProjectID"`
+	User          UserModel    `gorm:"foreignKey:UserID"`
 	ProjectID     int          `gorm:"not null"`
 	Project       ProjectModel `gorm:"foreignKey:ProjectID"`
 	Hours         float64      `gorm:"not null"`

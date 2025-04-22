@@ -44,6 +44,7 @@ services:
       CACHE_PORT: 6379
       CACHE_USER: default
       CACHE_PASSWORD: password
+      CACHE_TTL: 3600
     depends_on:
       - database-service
     networks:

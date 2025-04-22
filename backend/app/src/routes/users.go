@@ -9,7 +9,7 @@ import (
 
 func setupUserRoutes(router *gin.RouterGroup) {
 	controller := controllers.UserController{
-		ServiceCfg: services.UserService.CRUDServiceConfig,
+		Service: services.UserService,
 	}
 
 	router.GET("/users/:id", controller.GetUser)

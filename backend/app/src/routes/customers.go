@@ -9,7 +9,7 @@ import (
 
 func setupCustomerRoutes(router *gin.RouterGroup) {
 	controller := controllers.CustomerController{
-		ServiceCfg: services.CustomerService.CRUDServiceConfig,
+		Service: services.CustomerService,
 	}
 
 	router.GET("/customers/:id", controller.GetCustomer)

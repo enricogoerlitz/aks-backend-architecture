@@ -9,7 +9,7 @@ import (
 
 func setupProjectRoutes(router *gin.RouterGroup) {
 	controller := controllers.ProjectController{
-		ServiceCfg: services.ProjectService.CRUDServiceConfig,
+		Service: services.ProjectService,
 	}
 
 	router.GET("/projects/:id", controller.GetProject)
