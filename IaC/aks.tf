@@ -22,6 +22,12 @@ resource "azurerm_kubernetes_cluster" "main" {
   })
 }
 
+resource "azurerm_role_assignment" "aks_acr_pull" {
+  scope                = data.azurerm_container_registry.cr.id
+  role_definition_name = "AcrPull"
+  principal_id         = azurerm_kubernetes_cluster.main.identity[0].principal_id
+}
+
 # resource "azurerm_kubernetes_cluster_node_pool" "application" {
 #   name                  = "apppool"
 #   kubernetes_cluster_id = azurerm_kubernetes_cluster.main.id

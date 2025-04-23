@@ -9,7 +9,7 @@ $ az aks get-credentials --resource-group explore-aks-devops-dev-weu-rg --name e
 $ kubectl get nodes 
 $ kubectl get nodes -o wide
 
-$ kubectl create namespace spark-cluster
+$ kubectl create namespace blub
 $ kubectl apply -f ./kube-manifests
 
 # enter kubernetes cluster in shell -> use nsloopup etc for debugging
@@ -18,6 +18,14 @@ $ kubectl run -n default dnsutils --image=busybox:1.28 --rm -it --restart=Never 
 $ kubectl get nodes --label-columns agendpool
 $ kubectl label node aks-sparkpool001-87494612-vmss00000{0&1&2} nodepool=sparkpool001
 
+```
+
+**Database**
+
+```bash
+$ kubectl apply -f kube-manifests/database/postgres-database.yaml
+$ kubectl apply -f kube-manifests/database/database-migration-job.yaml 
+$ kubectl logs/flyway-migration-job -f
 ```
 
 **Redis check**

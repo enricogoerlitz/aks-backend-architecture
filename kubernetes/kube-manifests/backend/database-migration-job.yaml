@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: flyway-migration-job
+spec:
+  template:
+    spec:
+      containers:
+        - name: flyway-migration
+          image: eaksprojectweucr.azurecr.io/aks-backend-flyway-migration-service:latest
+          command: ["python", "scripts/flyway.py", "migrate"]
+          env:
+            - name: FLYWAY_URL
+              value: "jdbc:postgresql://postgres-master:5432/database"
+            - name: FLYWAY_USER
+              value: "postgres"
+            - name: FLYWAY_PASSWORD
+              value: "masterpassword"
+            - name: FLYWAY_SCHEMAS
+              value: "public"
+      restartPolicy: OnFailure
