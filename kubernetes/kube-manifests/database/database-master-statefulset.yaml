@@ -22,9 +22,15 @@ spec:
             - name: POSTGRESQL_REPLICATION_MODE
               value: "master"
             - name: POSTGRESQL_USERNAME
-              value: "postgres"
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: DB_WRITE_USER
             - name: POSTGRESQL_PASSWORD
-              value: "masterpassword"
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: DB_WRITE_PASSWORD
             - name: POSTGRESQL_REPLICATION_USER
               value: "repl_user"
             - name: POSTGRESQL_REPLICATION_PASSWORD

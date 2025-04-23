@@ -34,17 +34,29 @@ spec:
             - name: DB_WRITE_PORT
               value: "5432"
             - name: DB_WRITE_USER
-              value: "postgres"
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: DB_WRITE_USER
             - name: DB_WRITE_PASSWORD
-              value: "masterpassword"
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: DB_WRITE_PASSWORD
             - name: DB_READ_HOST
               value: "postgres-master"
             - name: DB_READ_PORT
               value: "5432"
             - name: DB_READ_USER
-              value: "postgres"
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: DB_READ_USER
             - name: DB_READ_PASSWORD
-              value: "masterpassword"
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: DB_READ_PASSWORD
             - name: DB_NAME
               value: "database"
             - name: CACHE_TYPE
@@ -54,9 +66,15 @@ spec:
             - name: CACHE_PORT
               value: "6379"
             - name: CACHE_USER
-              value: "default"
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: CACHE_USER
             - name: CACHE_PASSWORD
-              value: "my-password"
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: CACHE_PASSWORD
             - name: CACHE_TTL
               value: "3600"
       restartPolicy: Always

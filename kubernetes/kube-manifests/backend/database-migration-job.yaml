@@ -13,9 +13,15 @@ spec:
             - name: FLYWAY_URL
               value: "jdbc:postgresql://postgres-master:5432/database"
             - name: FLYWAY_USER
-              value: "postgres"
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: DB_WRITE_USER
             - name: FLYWAY_PASSWORD
-              value: "masterpassword"
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: DB_WRITE_PASSWORD
             - name: FLYWAY_SCHEMAS
               value: "public"
       restartPolicy: OnFailure
