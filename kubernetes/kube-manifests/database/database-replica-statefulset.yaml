@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: postgres-replica
+  namespace: database
 spec:
   serviceName: "postgres-replica"
   replicas: 2
@@ -15,6 +16,8 @@ spec:
         app: postgres
         role: replica
     spec:
+      nodeSelector:
+        kubernetes.azure.com/agentpool: database
       containers:
         - name: postgres
           image: bitnami/postgresql:15

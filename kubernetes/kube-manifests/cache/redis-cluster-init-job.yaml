@@ -2,11 +2,14 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: redis-cluster-init
+  namespace: database
 spec:
   ttlSecondsAfterFinished: 100
   backoffLimit: 0
   template:
     spec:
+      nodeSelector:
+        kubernetes.azure.com/agentpool: database
       containers:
       - name: redis-cluster-init
         image: redis:7.4.2-alpine
@@ -24,7 +27,7 @@ spec:
             all_ready=true
 
             for i in 0 1 2; do
-              host="redis-cluster-$i.redis-cluster-headless.default.svc.cluster.local"
+              host="redis-cluster-$i.redis-cluster-headless.database.svc.cluster.local"
               if ! nc -z "$host" "$REDIS_PORT"; then
                 all_ready=false
                 break
@@ -50,13 +53,13 @@ spec:
           sleep 5
           echo "Creating Redis cluster..."
           redis-cli --cluster create \
-            redis-cluster-0.redis-cluster-headless.default.svc.cluster.local:6379 \
-            redis-cluster-1.redis-cluster-headless.default.svc.cluster.local:6379 \
-            redis-cluster-2.redis-cluster-headless.default.svc.cluster.local:6379 \
+            redis-cluster-0.redis-cluster-headless.database.svc.cluster.local:6379 \
+            redis-cluster-1.redis-cluster-headless.database.svc.cluster.local:6379 \
+            redis-cluster-2.redis-cluster-headless.database.svc.cluster.local:6379 \
             -a "my-password" \
             --cluster-replicas 0 --cluster-yes
 
           sleep 5
           echo "Checking cluster status..."
-          redis-cli -h redis-cluster-0.redis-cluster-headless.default.svc.cluster.local -a "my-password" cluster info
+          redis-cli -h redis-cluster-0.redis-cluster-headless.database.svc.cluster.local -a "my-password" cluster info
       restartPolicy: Never

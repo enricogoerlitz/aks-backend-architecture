@@ -31,15 +31,15 @@ $ kubectl logs/flyway-migration-job -f
 **Redis check**
 
 ```bash
-$ kubectl logs job/redis-cluster-init -f
+$ kubectl logs redis-cluster-init -f -n database
 
-$ kubectl run debug-dns --rm -it --image=alpine -- sh
+$ kubectl run debug-dns --rm -it --image=alpine -n <namespace> -- sh
 
 $ redis-cli -h 9.163.157.93 -p 6379 -a my-password
 $ redis-cli -h 9.163.157.93 -p 6379 -a my-password cluster info
 $ redis-cli -h 9.163.157.93 -p 6379 -a my-password cluster nodes
-$ kubectl exec -it redis-cluster-0 -- redis-cli -a my-password cluster info
+$ kubectl exec -it redis-cluster-0 -n database -- redis-cli -a my-password cluster info
 
 # CLuster mode!
-$ kubectl exec -it redis-cluster-0 -- redis-cli -c -a my-password
+$ kubectl exec -it redis-cluster-0 -n database -- redis-cli -c -a my-password
 ```

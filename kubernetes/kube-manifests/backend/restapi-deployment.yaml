@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: aks-backend-restapi
+  namespace: application
 spec:
   replicas: 1
   selector:
@@ -30,7 +31,7 @@ spec:
             - name: DB_TYPE
               value: "POSTGRESQL"
             - name: DB_WRITE_HOST
-              value: "postgres-master"
+              value: "postgres-master.database.svc.cluster.local"
             - name: DB_WRITE_PORT
               value: "5432"
             - name: DB_WRITE_USER
@@ -44,7 +45,7 @@ spec:
                   name: app-secrets
                   key: DB_WRITE_PASSWORD
             - name: DB_READ_HOST
-              value: "postgres-master"
+              value: "postgres-master.database.svc.cluster.local"
             - name: DB_READ_PORT
               value: "5432"
             - name: DB_READ_USER
@@ -62,7 +63,7 @@ spec:
             - name: CACHE_TYPE
               value: "REDIS_CLUSTER"
             - name: CACHE_HOSTS
-              value: "redis-cluster-0.redis-cluster-headless.default.svc.cluster.local:6379,redis-cluster-1.redis-cluster-headless.default.svc.cluster.local:6379,redis-cluster-2.redis-cluster-headless.default.svc.cluster.local:6379"
+              value: "redis-cluster-0.redis-cluster-headless.database.svc.cluster.local:6379,redis-cluster-1.redis-cluster-headless.database.svc.cluster.local:6379,redis-cluster-2.redis-cluster-headless.database.svc.cluster.local:6379"
             - name: CACHE_PORT
               value: "6379"
             - name: CACHE_USER

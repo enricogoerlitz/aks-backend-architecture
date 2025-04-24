@@ -11,7 +11,7 @@ spec:
           command: ["python", "scripts/flyway.py", "migrate"]
           env:
             - name: FLYWAY_URL
-              value: "jdbc:postgresql://postgres-master:5432/database"
+              value: "jdbc:postgresql://postgres-master.database.svc.cluster.local:5432/database"
             - name: FLYWAY_USER
               valueFrom:
                 secretKeyRef:

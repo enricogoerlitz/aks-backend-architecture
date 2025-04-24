@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: postgres-master
+  namespace: database
 spec:
   serviceName: "postgres-master"
   replicas: 1
@@ -15,6 +16,8 @@ spec:
         app: postgres
         role: master
     spec:
+      nodeSelector:
+        kubernetes.azure.com/agentpool: database
       containers:
         - name: postgres
           image: bitnami/postgresql:15

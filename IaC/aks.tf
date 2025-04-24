@@ -8,7 +8,7 @@ resource "azurerm_kubernetes_cluster" "main" {
   kubernetes_version  = "1.31.7"
 
   default_node_pool {
-    name       = "default"
+    name       = "system"
     node_count = 1
     vm_size    = "Standard_D2ps_v6"
   }
@@ -28,30 +28,30 @@ resource "azurerm_role_assignment" "aks_acr_pull" {
   principal_id         = azurerm_kubernetes_cluster.main.identity[0].principal_id
 }
 
-# resource "azurerm_kubernetes_cluster_node_pool" "application" {
-#   name                  = "apppool"
-#   kubernetes_cluster_id = azurerm_kubernetes_cluster.main.id
-#   vm_size               = "Standard_D2ps_v6"
+resource "azurerm_kubernetes_cluster_node_pool" "application" {
+  name                  = "application"
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.main.id
+  vm_size               = "Standard_D2ps_v6"
 
-#   auto_scaling_enabled = true
-#   min_count            = 1
-#   max_count            = 3
+  auto_scaling_enabled = true
+  min_count            = 1
+  max_count            = 1
 
-#   tags = merge(var.default_tags, {
-#     "env" = terraform.workspace
-#   })
-# }
+  tags = merge(var.default_tags, {
+    "env" = terraform.workspace
+  })
+}
 
-# resource "azurerm_kubernetes_cluster_node_pool" "database" {
-#   name                  = "dbpool"
-#   kubernetes_cluster_id = azurerm_kubernetes_cluster.main.id
-#   vm_size               = "Standard_D2ps_v6"
+resource "azurerm_kubernetes_cluster_node_pool" "database" {
+  name                  = "database"
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.main.id
+  vm_size               = "Standard_D2ps_v6"
 
-#   auto_scaling_enabled = true
-#   min_count            = 1
-#   max_count            = 3
+  auto_scaling_enabled = true
+  min_count            = 1
+  max_count            = 1
 
-#   tags = merge(var.default_tags, {
-#     "env" = terraform.workspace
-#   })
-# }
+  tags = merge(var.default_tags, {
+    "env" = terraform.workspace
+  })
+}

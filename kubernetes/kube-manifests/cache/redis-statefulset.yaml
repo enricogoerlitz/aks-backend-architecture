@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: redis-cluster
+  namespace: database
 spec:
   serviceName: redis-cluster-headless
   replicas: 3
@@ -13,6 +14,8 @@ spec:
       labels:
         app: redis-cluster
     spec:
+      nodeSelector:
+        kubernetes.azure.com/agentpool: database
       containers:
       - name: redis
         image: redis:7.4.2-alpine
