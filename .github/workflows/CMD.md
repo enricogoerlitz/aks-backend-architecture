@@ -3,6 +3,7 @@
 ## Login into Azure
 
 ```bash
+# Login into az
 $ az login -u <username> -p <password>
 ```
 

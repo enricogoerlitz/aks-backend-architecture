@@ -1,4 +1,6 @@
+# Terraform CMDs
 
+## Commands
 
 ```sh
 $ terraform init
@@ -22,5 +24,4 @@ $ tfapply / tfplan -> will execute alias (only valid within an session)
 $ terraform destroy
 $ terraform destroy -auto-approve
 $ terraform destroy -var-file=tfvars.$(terraform workspace show).tfvars -auto-approve
-
 ```
